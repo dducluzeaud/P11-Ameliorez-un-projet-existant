@@ -1,0 +1,16 @@
+[
+    {
+        "product_name": "Muesli sans sucre ajouté* Bio",
+        "product_id": 3229820129488,
+        "product_url": "https://fr.openfoodfacts.org/produit/3229820129488/muesli-sans-sucre-ajoute-bio-bjorg",
+        "product_img": "https://static.openfoodfacts.org/images/products/322/982/012/9488/front_fr.6.200.jpg",
+        "nutriscore": "a",
+        "fat": 6.3,
+        "saturated_fat": "1",
+        "salt": 0.1,
+        "sugar": "13",
+        "categories": [
+            "en:plant-based-foods-and-beverages"
+        ]
+    }
+]

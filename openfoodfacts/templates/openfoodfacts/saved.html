@@ -1,0 +1,98 @@
+{% extends 'openfoodfacts/base.html' %}
+
+{% block title%}{{ page_title }}{% endblock %}
+
+{% block content %}
+
+    {% include 'openfoodfacts/header.html' with title=title img=img %}
+
+    {% if products_saved|length_is:"0" %}
+    <section>
+        <div class="container text-center">
+            <h2>Vous n'avez pas encore de produit dans votre liste !</h2><br>
+            <p>Choisissez un produit à l'aide de la recherche et sauvegardez le pour qu'il apparraisse dans votre liste.</p>
+
+        </div>
+    </section>
+
+    {% else %}
+
+    <section>
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-lg-6">
+                    <h3>Produit original</h3>
+                    <hr>
+                </div>
+                <div class="col-lg-6">
+                    <h3>Produit de substition</h3>
+                    <hr>
+                </div>
+            </div>
+            {% for product in products_saved %}
+            <div class="row">
+                <div class="col-lg-6">
+                    <a href="{% url 'openfoodfacts:detail' id_product=product.origin.id_product %}">
+                    <img class="mx-auto d-block" src="{{ product.origin.img}}" width="200px" height="200px"></a>
+                    <div class="container text-center my-4">
+                        <h6><a href="">{{ product.origin.product_name }}</a></h6>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <a href="{% url 'openfoodfacts:detail' id_product=product.replacement.id_product %}">
+                    <img class="mx-auto d-block" src="{{product.replacement.img}}" width="200px" height="200px" ></a>
+                    <div class="container text-center my-4">
+                        <h6><a href="">{{ product.replacement.product_name}}</a></h6>
+                        <form  method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="origin" value="{{product.origin.id_product}}"/>
+                            <input type="hidden" name="replacement" value="{{product.replacement.id_product}}"/>
+                            <button><i class="fa fa-times">&nbsp; Supprimer</i></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
+        {% if forloop.counter|divisibleby:3 %}<div class="clearfix"></div>{% endif %}
+        {% endfor %}
+        </div>
+
+        {% if paginate %}
+        <div class="clearfix"></div>
+        <div class="container center my-4">
+            <nav aria-label="">
+                <ul class="pagination justify-content-center pagination-sm">
+                  {% if products_saved.has_previous %}
+                      <li class="page-item"><a class="page-link" href="?page={{ products_saved.previous_page_number }}">Précédent</a></li>
+                  {% endif %}
+
+                  {% for page in products_saved.paginator.page_range %}
+                    {% if page %}
+                      {% ifequal page products_saved.number %}
+                        <li class="page-item active">
+                          <span class="page-link">{{ page }}</span>
+                        </li>
+                      {% else %}
+                        <li class="page-item">
+                          <a href="?page={{ page }}" class="page-link">{{ page }}</a>
+                        </li>
+                      {% endifequal %}
+                    {% else %}
+                      <li class="page-item disabled"><span class="page-link">. . .</span></li>
+                    {% endif %}
+                  {% endfor %}
+                  {% if products_saved.has_next %}
+                      <li class="page-item"><a class="page-link" href="?page={{ products_saved.next_page_number }}">Suivant</a></li>
+                  {% endif %}
+                </ul>
+            </nav>
+        </div>
+
+        {% endif %}
+
+    </section>
+
+    {% endif %}
+
+{% endblock %}

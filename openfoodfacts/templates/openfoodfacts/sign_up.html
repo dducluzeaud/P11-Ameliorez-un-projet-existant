@@ -1,0 +1,32 @@
+{% extends 'openfoodfacts/base.html' %}
+
+{% block title%}{{ page_title }}{% endblock %}
+
+{% block content %}
+    {% include 'openfoodfacts/header.html' with title=title img=img %}
+    <section>
+
+                <form method="post">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="row">
+                            <div class="mx-auto">
+                        {{ field.label_tag }}{{ field }}
+                            </div>
+                        </div>
+                        <div class="mx-auto text-center">
+                            {% for error in field.errors %}
+                                <p style="color: red">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                    <div class="text-center">
+                        <button class="btn btn-primary"  type="submit">S'enregistrer<//button>
+
+                    </div>
+                </form>
+
+
+    </section>
+
+{% endblock %}

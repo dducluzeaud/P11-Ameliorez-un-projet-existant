@@ -1,0 +1,29 @@
+{% extends 'openfoodfacts/base.html' %}
+
+{% block title%}{{ page_title }}{% endblock %}
+
+{% block content %}
+{% include 'openfoodfacts/header.html' with img="https://authentic-visit.jp/wp-content/uploads/2017/12/gregoire-jeanneau-1451361.jpg" title="Connectez vous" %}
+<section class='text-center ml-auto'>
+    <div class="container">
+        <div class="row">
+            <div class="mx-auto text-center">
+                <form id="login_form"
+                method="post">
+                  {% csrf_token %}
+                  {{ form.as_p }}
+                  <button class="btn btn-primary" type="submit">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+        <div class="container text-center">
+            <br>
+            <p>Pas encore de compte?
+            <a href="{% url 'openfoodfacts:sign_up' %}">Inscrivez vous !</a></p>
+
+        </div>
+
+</section>
+
+{% endblock %}

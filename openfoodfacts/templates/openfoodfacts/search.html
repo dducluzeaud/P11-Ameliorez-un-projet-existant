@@ -1,0 +1,79 @@
+{% extends 'openfoodfacts/base.html' %}
+
+{% load static %}
+
+{% block title%}{{ page_title }}{% endblock %}
+{% block content %}
+
+{% include 'openfoodfacts/header.html' with img=img title=title %}
+
+{% if products|length_is:"0"%}
+<section>
+    <div class="container text-center mb-5">
+        <h3>Nous n'avons pas de produits substitution à vous proposer pour le moment. </h3>
+    </div>
+</section>
+{% else %}
+<section>
+    <div class="container text-center mb-5" >
+            <h3>Vous pouvez remplacer cet aliment par:</h3>
+            <hr>
+        <div class="row  mb-4">
+            {% for product in products %}
+            <div class="col-lg-4 item">
+                <a href="{% url 'openfoodfacts:detail' id_product=product.id_product %}"><span class="notify-badge">{{ product.nutriscore }}</span>
+                    <img  class="mx-auto d-block" src="{{ product.img }}" alt="Product.product_name" width="300px" height="250px" /><br>
+                </a>
+            <div class="container">
+                <h6><a href="">{{ product.product_name }}</a></h6>
+                {% if user.is_authenticated %}
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="origin" value="{{query_prod}}"/>
+                    <input type="hidden" name="replacement" value="{{product.id_product}}"/>
+                    <button><i class="fa fa-floppy-o" aria-hidden="true">&nbsp; Sauvegarder</i></button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    {% if forloop.counter|divisibleby:3 %}<div class="clearfix"></div>{% endif %}
+    {% endfor %}
+    </div>
+
+
+    {% if paginate %}
+    <div class="clearfix"></div>
+    <div class="container center my-4">
+        <nav aria-label="">
+            <ul class="pagination justify-content-center pagination-sm">
+              {% if products.has_previous %}
+                  <li class="page-item"><a class="page-link" href="?id_product={{ query }}&page={{ products.previous_page_number }}">Précédent</a></li>
+              {% endif %}
+              {% for page in products.paginator.page_range %}
+                {% if page %}
+                  {% ifequal page products.number %}
+                    <li class="page-item active">
+                      <span class="page-link">{{ page }}</span>
+                    </li>
+                  {% else %}
+                    <li class="page-item">
+                      <a href="?id_product={{ query }}&page={{ page }}" class="page-link">{{ page }}</a>
+                    </li>
+                  {% endifequal %}
+                {% else %}
+                  <li class="page-item disabled"><span class="page-link">. . .</span></li>
+                {% endif %}
+              {% endfor %}
+              {% if products.has_next %}
+                  <li class="page-item"><a class="page-link" href="?id_product={{ query }}&page={{ products.next_page_number }}">Suivant</a></li>
+              {% endif %}
+            </ul>
+        </nav>
+    </div>
+
+    {% endif %}
+
+
+</section>
+{% endif %}
+{% endblock %}

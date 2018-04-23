@@ -1,0 +1,11 @@
+{% extends 'openfoodfacts/base.html'%}
+
+{% block title%}{{ page_title }}{% endblock %}
+
+{% block content %}
+
+{% include 'openfoodfacts/header.html' with title=title img=img %}
+
+{% include 'openfoodfacts/contact.html' %}
+
+{% endblock %}
