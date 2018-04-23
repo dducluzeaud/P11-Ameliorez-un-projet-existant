@@ -1,0 +1,62 @@
+{% extends 'openfoodfacts/base.html'  %}
+
+{% load static %}
+
+{% block title%}{{ page_title }}{% endblock %}
+
+{% block content %}
+
+<header class="masthead text-center text-white d-flex">
+  <div class="container my-auto">
+    <div class="row">
+      <div class="col-lg-10 mx-auto">
+        <h1 class="text-uppercase text-white">
+          Du gras, oui, mais de qualité !
+        </h1>
+        <hr>
+      </div>
+      <div class="col-lg-8 mx-auto">
+        <h2 class="mb-5 text-white">Trouvez un produit de substitution pour ceux que vous consommez tous les jours.</h2>
+        <form method="get" action="{% url 'openfoodfacts:products_list' %}" accept-charset="utf-8">
+            <div class="col-lg-8 mx-auto input-group mb-3">
+                <div class="input-group">
+                  <input class="form-control" placeholder="Nom d'un produit à susbstituer" name="query">
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit">Chercher</button>
+                  </div>
+                </div>
+                {% if error %}
+                    <script> alert('{{ error }}')</script>
+                {% endif %}
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="bg-primary" id="about">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-10 mx-auto text-center">
+        <h2 class="section-heading text-white">Colette et Rémy!</h2>
+        <hr class="light my-4">
+
+        <div class="row">
+            <div class="col-lg-6">
+                <img src="{% static 'openfoodfacts/img/colette.png' %}" alt="" height="250px">
+                <p class="text-faded mb-4 text-justify"><strong>Colette Tatou :</strong> "Nous aimons tous manger, surtout en France ! Personnellement, une baguette fraîche, du bon fromage de chèvre et un bon vin rouge me suffisent amplement. Comme tout le monde, je fais mes courses au supermarché. Mais petit à petit je me suis rendue compte, surtout lorsque nous avons ouvert le restaurant, que je pouvais remplacer les produits aseptisés que j'avais l'habitude d'acheter par de bons produits du terroir Et souvent pour le même prix !"</p>
+            </div>
+            <div class="col-lg-6">
+                <img src="{% static 'openfoodfacts/img/remy.png' %}" alt="" height="250px">
+                <p class="text-faded mb-4 text-justify"><strong>Remy : </strong>"Pour ma part je me rendais déjà dans bien des magasins car j'aime beaucoup me balader, surtout dans les caves et les cuisines. Je connaissais par coeur le contenu des boutiques bio (dont je raffole) ainsi que les ingrédients de tous les aliments vendus. Lorsque Colette m'a demandé si elle pouvait remplacer son Nutella matinal par un aliment plus sain, je savais tout de suite où le trouver. L'idée de Pur Beurre était née !"</p>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% include 'openfoodfacts/contact.html' %}
+
+{% endblock %}
