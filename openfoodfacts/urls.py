@@ -11,9 +11,10 @@ urlpatterns = [
     path('logout/', auth_views.logout, {'next_page': '/'}, name='logout'),
     path('register/', views.sign_up, name='sign_up'),
     path('account/', views.account, name='account'),
+    path('ajax/change_email/', views.validate_changemail, name='validate_changemail'),
+    path('ajax/change_passwd/', views.validate_change_passwd, name='validate_change_passwd'),
     path('contacts/', views.contacts, name='contacts'),
     path('legals/', views.legals, name='legals'),
     path('saved/', views.saved, name='saved'),
     path('', include('django.contrib.auth.urls'))
-
 ]

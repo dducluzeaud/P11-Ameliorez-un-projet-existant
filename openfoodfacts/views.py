@@ -182,6 +182,49 @@ def account(request):
     return render(request, 'openfoodfacts/account.html', context)
 
 
+def validate_changemail(request):
+    """AJAX view for changing user e-mail."""
+    data = dict()
+
+    if request.method == 'POST':
+        email_form = EmailChangeForm(data=request.POST)
+
+        if email_form.is_valid():
+            new_mail = email_form.cleaned_data['new_email']
+
+            u = User.objects.get(username=request.user)
+            if new_mail != u.email:
+                u.email = new_mail
+                u.save()
+                print(u.email)
+                data['form_is_valid'] = True
+            else:
+                data['form_is_valid'] = False
+
+        return JsonResponse(data)
+
+
+def validate_change_passwd(request):
+    """AJAX view for changing user password."""
+    data = dict()
+
+    if request.method == 'POST':
+        passwd_form = PasswordChangeForm(
+            request.user,
+            request.POST
+            )
+        if passwd_form.is_valid():
+            passwd_form.save()
+            update_session_auth_hash(request, passwd_form.user)
+            data['msg'] = 'Votre mot de passe a bien été changé !'
+            data['form_is_valid'] = True
+        else:
+            data['msg'] = 'Impossible de changer votre mot de passe. Réessayez!'
+            data['form_is_valid'] = False
+    return JsonResponse(data)
+
+
+
 def contacts(request):
     context = {
         "title": 'Contacts',

@@ -203,7 +203,7 @@ class AccountTestPageCase(TestCase):
         self.assertEqual(response.status_code, 302)
 
 
-class TestPageCase(TestCase):
+class SavedTestPageCase(TestCase):
     def setUp(self):
         url = reverse('openfoodfacts:saved')
         self.data = {
@@ -273,3 +273,87 @@ class testPoductsListView(TestCase):
     def test_product_list_page_returns_404(self):
         response = self.client.get(self.url, {"query": "Fromages"})
         self.assertTrue(response, 404)
+
+
+class EmailChangeTestCase(TestCase):
+    def setUp(self, data={}):
+        self.user = User.objects.create_user(username='john', email='john@doe.com', password='old_password')
+        self.url = reverse('openfoodfacts:validate_changemail')
+        self.client.login(username='john', password='old_password')
+        self.response = self.client.post(self.url, data)
+
+
+class SuccessfulEmailChangeTests(EmailChangeTestCase):
+    def setUp(self):
+        super().setUp({
+            'new_email': 'jane@doe.com',
+        })
+
+    def test_email_changed(self):
+        """
+        refresh the user instance from database to get the new password
+        hash updated by the change password view.
+        """
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.email, 'jane@doe.com')
+
+
+class PasswordChangeTestCase(TestCase):
+    def setUp(self, data={}):
+        self.user = User.objects.create_user(
+            username='john',
+            email='john@doe.com',
+            password='old_password'
+            )
+        self.url = reverse('openfoodfacts:validate_change_passwd')
+        self.client.login(username='john', password='old_password')
+        self.response = self.client.post(self.url, data)
+
+
+class SuccessfulPasswordChangeTests(PasswordChangeTestCase):
+    def setUp(self):
+        super().setUp({
+            'old_password': 'old_password',
+            'new_password1': 'new_password',
+            'new_password2': 'new_password',
+        })
+
+    def test_password_changed(self):
+        """
+        refresh the user instance from database to get the new password
+        hash updated by the change password view.
+        """
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password('new_password'))
+
+    def test_user_authentication(self):
+        """
+        Create a new request to an arbitrary page.
+        The resulting response should now have an `user` to its context, after a successful sign up.
+        """
+        response = self.client.get(reverse('openfoodfacts:saved'))
+        user = response.context.get('user')
+        self.assertTrue(user.is_authenticated)
+
+
+class InvalidPasswordChangeTests(PasswordChangeTestCase):
+    def setUp(self):
+        super().setUp({
+            'old_password': 'old_password',
+            'new_password1': 'new_password',
+            'new_password2': 'nnn_password',
+        })
+
+    def test_status_code(self):
+        """
+        An invalid form submission should return to the same page
+        """
+        self.assertEquals(self.response.status_code, 200)
+
+    def test_didnt_change_password(self):
+        """
+        refresh the user instance from the database to make
+        sure we have the latest data.
+        """
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password('old_password'))
