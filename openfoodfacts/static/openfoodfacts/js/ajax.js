@@ -41,12 +41,11 @@ function new_passwd_post() {
            data: form.serialize(),
            // handle a successful response
            success : function(data) {
-           alert(data.msg)
            if (data.form_is_valid) {
-           alert("Mot de passe modifié avec succès"); // remove the value from the input
+           alert(data.msg); // remove the value from the input
            $("#new_passwd")[0].reset();
            } else {
-           alert("Impossible de changer le mot de passe.")
+           alert(data.msg)
            }
        },
    })

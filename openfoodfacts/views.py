@@ -219,8 +219,20 @@ def validate_change_passwd(request):
             data['msg'] = 'Votre mot de passe a bien été changé !'
             data['form_is_valid'] = True
         else:
-            data['msg'] = 'Impossible de changer votre mot de passe. Réessayez!'
+            error = passwd_form.errors.get_json_data(escape_html=False)
+            old_password_error = passwd_form.has_error('old_password')
+            new_password2_error = passwd_form.has_error('new_password2')
+
+            # Get the eror message depending on the input error
+            if old_password_error and not new_password2_error:
+                data['msg'] = error['old_password'][0]['message']
+            elif new_password2_error and not old_password_error:
+                data['msg'] = error['new_password2'][0]['message']
+            else:
+                data['msg'] = error['old_password'][0]['message'] + '\n' + error['new_password2'][0]['message']
+
             data['form_is_valid'] = False
+
     return JsonResponse(data)
 
 
